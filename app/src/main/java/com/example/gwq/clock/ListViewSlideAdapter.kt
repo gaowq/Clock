@@ -38,6 +38,7 @@ class ListViewSlideAdapter(private val context: Context, private val bulbList: L
             viewHolder.tvDelete = view.findViewById<View>(R.id.delete) as TextView
             viewHolder.tvEdit = view.findViewById<View>(R.id.tvEdit) as TextView
             viewHolder.isOn = view.findViewById<View>(R.id.switch1) as Switch
+            viewHolder.isOnStatus = view.findViewById<View>(R.id.switch1Status) as TextView
             view.tag = viewHolder//store up viewHolder
         } else {
             view = convertView
@@ -47,6 +48,7 @@ class ListViewSlideAdapter(private val context: Context, private val bulbList: L
         viewHolder.img!!.setImageResource(R.mipmap.ic_launcher)
         viewHolder.tvContent!!.text = bulb.Time
         viewHolder.isOn!!.isChecked = bulb.On!!
+        viewHolder.isOnStatus!!.text = if(bulb.On!!){"开"}else{"关"}
         viewHolder.tvDelete!!.setOnClickListener {
             if (onClickListenerEditOrDelete != null) {
                 onClickListenerEditOrDelete!!.OnClickListenerDelete(position)
@@ -55,6 +57,11 @@ class ListViewSlideAdapter(private val context: Context, private val bulbList: L
         viewHolder.tvEdit!!.setOnClickListener {
             if (onClickListenerEditOrDelete != null) {
                 onClickListenerEditOrDelete!!.OnClickListenerEdit(position)
+            }
+        }
+        viewHolder.isOn!!.setOnClickListener{
+            if(onClickListenerEditOrDelete!=null){
+                onClickListenerEditOrDelete!!.OnClickListenerSwitch(position)
             }
         }
         return view
@@ -66,11 +73,13 @@ class ListViewSlideAdapter(private val context: Context, private val bulbList: L
         internal var tvDelete: TextView? = null
         internal var img: ImageView? = null
         internal var isOn: Switch?=null
+        internal var isOnStatus: TextView?=null
     }
 
     interface OnClickListenerEditOrDelete {
         fun OnClickListenerEdit(position: Int)
         fun OnClickListenerDelete(position: Int)
+        fun OnClickListenerSwitch(position:Int)
     }
 
     fun setOnClickListenerEditOrDelete(onClickListenerEditOrDelete1: OnClickListenerEditOrDelete) {

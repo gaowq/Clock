@@ -13,9 +13,6 @@ import android.widget.Toast
 import java.util.*
 
 //1.todo 滑动返回
-//2.todo item修改
-//3.todo 迁移git
-//4.todo 开关
 class MainActivity : AppCompatActivity() ,TimePicker.OnTimeChangedListener{
     private var listView: SlideListView? = null
     private var list = ArrayList<ClockModel>()
@@ -56,6 +53,11 @@ class MainActivity : AppCompatActivity() ,TimePicker.OnTimeChangedListener{
                 list.removeAt(position);
                 listViewSlideAdapter!!.notifyDataSetChanged();
 
+            }
+
+            override fun OnClickListenerSwitch(position: Int) {
+                list[position].On=!list[position].On!!;
+                listViewSlideAdapter!!.notifyDataSetChanged();
             }
         })
 
