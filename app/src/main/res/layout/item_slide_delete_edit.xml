@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#ffffff"
+        android:orientation="horizontal">
+
+        <RelativeLayout
+            android:id="@+id/rlTop"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:padding="10dp">
+
+            <ImageView
+                android:id="@+id/imgLamp"
+                android:layout_width="49dp"
+                android:layout_height="49dp"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="10dp"
+                android:background="@android:color/holo_blue_dark"
+                android:scaleType="center"
+                android:src="@android:drawable/ic_popup_reminder" />
+
+            <TextView
+                android:id="@+id/tvContent"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="36dp"
+                android:layout_toRightOf="@+id/imgLamp"
+                android:gravity="center"
+                android:text="12:00"
+                android:textSize="36sp"
+                android:textStyle="bold" />
+
+            <Switch
+                android:id="@+id/switch1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="29dp"
+                android:layout_marginRight="29dp"
+                android:switchMinWidth="10dp"
+                android:track="@android:drawable/button_onoff_indicator_on"
+                tools:checked="false" />
+
+            <!--<Switch-->
+                <!--android:id="@+id/switch1"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textOn="关"-->
+                <!--android:textOff="开"-->
+                <!--android:switchMinWidth="40dp"-->
+                <!--android:track="@drawable/switch_track"-->
+                <!--android:thumb="@android:color/transparent" />-->
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_below="@+id/rlTop"
+            android:background="#EEEEEE"/>
+
+    </RelativeLayout>
+
+    <!--Edit-->
+    <TextView
+        android:id="@+id/tvEdit"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:background="#dddddd"
+        android:gravity="center"
+        android:paddingLeft="20dp"
+        android:layout_marginBottom="1dp"
+        android:textColor="@android:color/white"
+        android:paddingRight="20dp"
+        android:text="编辑" />
+
+    <!--delete-->
+    <TextView
+        android:id="@+id/delete"
+        android:layout_width="80dp"
+        android:layout_height="match_parent"
+        android:background="#FFFF0000"
+        android:gravity="center"
+        android:paddingLeft="20dp"
+        android:layout_marginBottom="1dp"
+        android:textColor="@android:color/white"
+        android:paddingRight="20dp"
+        android:text="删除" />
+
+</LinearLayout>
