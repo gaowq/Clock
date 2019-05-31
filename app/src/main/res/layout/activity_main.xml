@@ -11,8 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:textSize="20sp"
-        android:text="title" />
+        android:textSize="8sp" />
     <com.example.gwq.clock.SlideListView
         android:id="@+id/list"
         android:layout_width="match_parent"

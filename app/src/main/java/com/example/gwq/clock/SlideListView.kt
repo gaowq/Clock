@@ -18,7 +18,7 @@ class SlideListView @JvmOverloads constructor(context: Context, attrs: Attribute
     private var isDeleteShown: Boolean = false    // 删除按钮是否正在显示
 
     private var mPointChild: ViewGroup? = null    // 当前处理的item
-    private var mLayoutParams: LinearLayout.LayoutParams? = null    // 当前处理的item的LayoutParams
+     var mLayoutParams: LinearLayout.LayoutParams? = null    // 当前处理的item的LayoutParams
 
     init {
 
