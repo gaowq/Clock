@@ -1,20 +1,27 @@
 package com.example.gwq.clock
 
 import android.app.AlertDialog
+import android.content.Context
 import android.support.design.widget.FloatingActionButton
 import android.support.design.widget.Snackbar
 import android.support.v7.widget.Toolbar
 import android.content.DialogInterface;
+import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.TimePicker
 import android.widget.Toast
 import java.util.*
+import android.app.AlarmManager
+import android.app.PendingIntent
+
+
 
 //2.todo 闹钟机制
 //3.todo 保存、读取
 //4.todo 请求机制
+//5.todo 时间格式
 class MainActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
     private var listView: SlideListView? = null
     private var list = ArrayList<ClockModel>()
@@ -89,6 +96,10 @@ class MainActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
                 //}
                 //tvTime.setText(time.append(String.valueOf(hour)).append("时").append(String.valueOf(minute)).append("分"));
                 if (!isNew) listView!!.turnToNormal();
+
+
+                alarm(position);
+
                 dialog.dismiss();
 
             }
@@ -121,6 +132,29 @@ class MainActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
         this.hour = hour
         this.minute = minute
     }
+
+
+    fun alarm(position: Int){
+//        val intent = Intent(this, Context.ALARM_SERVICE::class.java);
+//        intent.putExtra("colckTime",list[position].Time);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        this.startService(intent);
+
+        val intent = Intent(this, AlarmReceiver::class.java)
+        //intent.putExtra("noteId", noteId)
+
+        val sender = PendingIntent.getBroadcast(
+                this, 0, intent, 0)
+
+        // We want the alarm to go off 10 seconds from now.
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis()
+        calendar.add(Calendar.SECOND, 10)
+
+        // Schedule the alarm!
+        val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        am.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, sender)
+    }
 }
 
 class ClockModel @JvmOverloads constructor(time: String, on: Boolean, isWork: Boolean) {
@@ -134,3 +168,5 @@ class ClockModel @JvmOverloads constructor(time: String, on: Boolean, isWork: Bo
         this.IsWork = isWork;
     }
 }
+
+
