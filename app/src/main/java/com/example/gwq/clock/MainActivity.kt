@@ -17,11 +17,9 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 
 
-
 //2.todo 闹钟机制
 //3.todo 保存、读取
 //4.todo 请求机制
-//5.todo 时间格式
 class MainActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
     private var listView: SlideListView? = null
     private var list = ArrayList<ClockModel>()
@@ -37,11 +35,6 @@ class MainActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        timePicker = findViewById(R.id.timePicker) as TimePicker
-//        timePicker!!.setIs24HourView(true);
-        //time= StringBuffer()
-
-        getData()
         initView()
     }
 
@@ -51,19 +44,20 @@ class MainActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
         listViewSlideAdapter = ListViewSlideAdapter(this, list)
         listView!!.adapter = listViewSlideAdapter
         listViewSlideAdapter!!.setOnClickListenerEditOrDelete(object : ListViewSlideAdapter.OnClickListenerEditOrDelete {
+            //修改时间
             override fun OnClickListenerEdit(position: Int) {
-                //Toast.makeText(this@MainActivity, "edit position: $position", Toast.LENGTH_SHORT).show()
                 setDate(position, false)
-                listViewSlideAdapter!!.notifyDataSetChanged();
+                listViewSlideAdapter!!.notifyDataSetChanged();//刷新
             }
 
+            //删除闹钟
             override fun OnClickListenerDelete(position: Int) {
-                //Toast.makeText(this@MainActivity, "delete position: $position", Toast.LENGTH_SHORT).show()
                 list.removeAt(position);
                 listViewSlideAdapter!!.notifyDataSetChanged();
 
             }
 
+            //开关闹钟
             override fun OnClickListenerSwitch(position: Int) {
                 list[position].On = !list[position].On!!;
                 listViewSlideAdapter!!.notifyDataSetChanged();
@@ -81,25 +75,20 @@ class MainActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
     //设置时间
     private fun setDate(position: Int, isNew: Boolean) {
         var builder2 = AlertDialog.Builder(this);
-        builder2.setPositiveButton("设置", object : DialogInterface.OnClickListener {
+
+        //生成闹钟
+        builder2.setPositiveButton("确定", object : DialogInterface.OnClickListener {
             override fun onClick(dialog: DialogInterface, which: Int) {
                 if (position == list.count()) {
-                    list.add(ClockModel(hour.toString() + "：" + minute.toString(), true, true))
+                    list.add(ClockModel(hour, minute, true, true))
                 } else {
-                    list[position] = ClockModel(hour.toString() + "：" + minute.toString(), true, true)
+                    list[position] = ClockModel(hour, minute, true, true)
                 }
 
-                list.sortBy({ t -> t.Time })
+                list.sortBy({ t -> t.Time() })
                 listViewSlideAdapter!!.notifyDataSetChanged();
-                //if (time!!.length > 0) { //清除上次记录的日期
-                //    time!!.delete(0, time!!.length);
-                //}
-                //tvTime.setText(time.append(String.valueOf(hour)).append("时").append(String.valueOf(minute)).append("分"));
                 if (!isNew) listView!!.turnToNormal();
-
-
                 alarm(position);
-
                 dialog.dismiss();
 
             }
@@ -120,52 +109,65 @@ class MainActivity : AppCompatActivity(), TimePicker.OnTimeChangedListener {
         dialog1.show();
     }
 
-    //获取数据
-    private fun getData() {
-//        for (i in 0..19) {
-//            list.add(("第" + i + "个item") as String)
-//        }
-    }
-
+    //时间选取继承方法
     override fun onTimeChanged(view: TimePicker?, hour: Int, minute: Int) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         this.hour = hour
         this.minute = minute
     }
 
 
-    fun alarm(position: Int){
-//        val intent = Intent(this, Context.ALARM_SERVICE::class.java);
-//        intent.putExtra("colckTime",list[position].Time);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        this.startService(intent);
+    fun alarm(position: Int) {
+        // 闹钟时间设置
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = System.currentTimeMillis();//跟日历同步
+        calendar.set(Calendar.HOUR, list[position].Hour!!);
+        calendar.set(Calendar.MINUTE, list[position].Minute!!);
+        //将秒和毫秒设置为0
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
 
         val intent = Intent(this, AlarmReceiver::class.java)
-        //intent.putExtra("noteId", noteId)
-
-        val sender = PendingIntent.getBroadcast(
-                this, 0, intent, 0)
-
-        // We want the alarm to go off 10 seconds from now.
-        val calendar = Calendar.getInstance()
-        calendar.timeInMillis = System.currentTimeMillis()
-        calendar.add(Calendar.SECOND, 10)
-
-        // Schedule the alarm!
+        val sender = PendingIntent.getBroadcast(this, ReqCode(position), intent, 0)
         val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         am.set(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, sender)
+        //成功提示
+        Toast.makeText(this, "设置闹钟的时间为：" + list[position].Time(), Toast.LENGTH_SHORT).show()
+    }
+
+    //生产闹钟编号
+    fun ReqCode(position: Int): Int {
+        list[position].ReqCode = (list[position].Hour!! * 60 + list[position].Minute!!) * 2 + (if (list[position].On!!) {
+            1
+        } else {
+            0
+        })
+        return list[position].ReqCode!!;
+    }
+
+    //取消闹钟
+    fun CancelClock(position: Int) {
+
     }
 }
 
-class ClockModel @JvmOverloads constructor(time: String, on: Boolean, isWork: Boolean) {
-    var Time: String? = "00:00";
+//闹钟类型
+//小时、分钟、开关状态、是否工作闹钟
+class ClockModel @JvmOverloads constructor(hour: Int, minute: Int, on: Boolean, isWork: Boolean) {
+    var Hour: Int? = 0;
+    var Minute: Int? = 0;
     var On: Boolean? = false;
     var IsWork: Boolean? = false;
+    var ReqCode: Int? = 0;//闹钟编码
 
     init {
-        this.Time = time;
+        this.Hour = hour;
+        this.Minute = minute;
         this.On = on;
         this.IsWork = isWork;
+    }
+
+    fun Time(): String {
+        return String.format("%02d:%02d", Hour, Minute)
     }
 }
 

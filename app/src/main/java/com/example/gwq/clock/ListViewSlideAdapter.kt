@@ -46,7 +46,7 @@ class ListViewSlideAdapter(private val context: Context, private val bulbList: L
         }
 
         viewHolder.img!!.setImageResource(R.mipmap.ic_launcher)
-        viewHolder.tvContent!!.text = bulb.Time
+        viewHolder.tvContent!!.text = bulb.Time()
         viewHolder.isOn!!.isChecked = bulb.On!!
         viewHolder.isOnStatus!!.text = if(bulb.On!!){"开"}else{"关"}
         viewHolder.tvDelete!!.setOnClickListener {
